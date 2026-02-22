@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio - Tienda Online{% endblock %}
+
+{% block content %}
+<div class="text-center mt-4">
+    <h1>Bienvenido a nuestra Tienda Online</h1>
+    <p class="mt-2">Descubre productos de calidad a precios increíbles</p>
+</div>
+
+{% if products %}
+    <h2 class="mt-4 mb-3">Productos Destacados</h2>
+    <div class="products-grid">
+        {% for product in products %}
+            <div class="card">
+                {% if product.image %}
+                    <img src="{{ url_for('static', filename='uploads/' + product.image) }}" alt="{{ product.name }}" class="card-img">
+                {% else %}
+                    <img src="{{ url_for('static', filename='uploads/products/default.jpg') }}" alt="{{ product.name }}" class="card-img">
+                {% endif %}
+                <div class="card-body">
+                    <h3 class="card-title">{{ product.name }}</h3>
+                    <p class="card-text">{{ product.description[:100] }}{% if product.description|length > 100 %}...{% endif %}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="price">${{ "%.2f"|format(product.price) }}</span>
+                        <a href="{{ url_for('product_detail', product_id=product.id) }}" class="btn">Ver Detalles</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    
+    <div class="text-center mt-4">
+        <a href="{{ url_for('products') }}" class="btn">Ver Todos los Productos</a>
+    </div>
+{% else %}
+    <div class="text-center mt-4">
+        <p>No hay productos disponibles en este momento.</p>
+    </div>
+{% endif %}
+{% endblock %}

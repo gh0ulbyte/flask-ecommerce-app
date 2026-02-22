@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Producto - Administración{% endblock %}
+
+{% block content %}
+<div class="text-center mt-4">
+    <h1>Editar Producto</h1>
+</div>
+
+<div style="max-width: 600px; margin: 2rem auto;">
+    <form method="POST" enctype="multipart/form-data" class="card">
+        <div class="card-body">
+            <div class="form-group">
+                <label for="name" class="form-label">Nombre del Producto</label>
+                <input type="text" id="name" name="name" class="form-control" value="{{ product.name }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="description" class="form-label">Descripción</label>
+                <textarea id="description" name="description" class="form-control" rows="4" required>{{ product.description }}</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="price" class="form-label">Precio</label>
+                <input type="number" id="price" name="price" step="0.01" min="0" class="form-control" value="{{ product.price }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="stock" class="form-label">Stock</label>
+                <input type="number" id="stock" name="stock" min="0" class="form-control" value="{{ product.stock }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="category" class="form-label">Categoría</label>
+                <input type="text" id="category" name="category" class="form-control" value="{{ product.category }}" required>
+            </div>
+            
+            {% if product.image %}
+                <div class="form-group">
+                    <label class="form-label">Imagen Actual</label>
+                    <div>
+                        <img src="{{ url_for('static', filename='uploads/' + product.image) }}" alt="{{ product.name }}" style="max-width: 200px; border-radius: 4px;">
+                    </div>
+                </div>
+            {% endif %}
+            
+            <div class="form-group">
+                <label for="image" class="form-label">Nueva Imagen (opcional)</label>
+                <input type="file" id="image" name="image" accept="image/*" class="form-control">
+                <small class="text-muted">Deja vacío para mantener la imagen actual</small>
+            </div>
+            
+            <div class="d-flex gap-2 mt-4">
+                <button type="submit" class="btn">Actualizar Producto</button>
+                <a href="{{ url_for('admin_products') }}" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

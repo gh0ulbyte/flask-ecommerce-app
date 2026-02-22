@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Panel de Administración - Tienda Online{% endblock %}
+
+{% block content %}
+<div class="text-center mt-4">
+    <h1>Panel de Administración</h1>
+    <p class="mt-2">Gestiona tu tienda online</p>
+</div>
+
+<!-- Estadísticas -->
+<div class="mt-4">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3>{{ stats.total_products }}</h3>
+                <p>Productos</p>
+            </div>
+        </div>
+        <div class="card text-center">
+            <div class="card-body">
+                <h3>{{ stats.total_orders }}</h3>
+                <p>Pedidos</p>
+            </div>
+        </div>
+        <div class="card text-center">
+            <div class="card-body">
+                <h3>{{ stats.total_users }}</h3>
+                <p>Usuarios</p>
+            </div>
+        </div>
+        <div class="card text-center">
+            <div class="card-body">
+                <h3>{{ stats.pending_orders }}</h3>
+                <p>Pedidos Pendientes</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Acciones rápidas -->
+<div class="mt-4">
+    <div class="card">
+        <div class="card-body">
+            <h3>Acciones Rápidas</h3>
+            <div class="d-flex gap-2 mt-3">
+                <a href="{{ url_for('admin_add_product') }}" class="btn">Agregar Producto</a>
+                <a href="{{ url_for('admin_products') }}" class="btn btn-secondary">Gestionar Productos</a>
+                <a href="{{ url_for('admin_orders') }}" class="btn btn-secondary">Ver Pedidos</a>
+                <a href="{{ url_for('admin_users') }}" class="btn btn-secondary">Gestionar Usuarios</a>
+                <a href="{{ url_for('admin_files') }}" class="btn btn-secondary">Gestionar Archivos</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Pedidos recientes -->
+{% if recent_orders %}
+    <div class="mt-4">
+        <div class="card">
+            <div class="card-body">
+                <h3>Pedidos Recientes</h3>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Usuario</th>
+                                <th>Total</th>
+                                <th>Estado</th>
+                                <th>Fecha</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in recent_orders %}
+                                <tr>
+                                    <td>{{ order.id }}</td>
+                                    <td>{{ order.user.username }}</td>
+                                    <td>${{ "%.2f"|format(order.total) }}</td>
+                                    <td>{{ order.status.title() }}</td>
+                                    <td>{{ order.created_at.strftime('%d/%m/%Y') }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}

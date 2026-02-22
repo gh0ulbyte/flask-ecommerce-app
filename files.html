@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}Gestionar Archivos - Administración{% endblock %}
+
+{% block content %}
+<div class="text-center mt-4">
+    <h1>Gestionar Archivos</h1>
+</div>
+
+<!-- Formulario de carga -->
+<div class="mt-4">
+    <div class="card">
+        <div class="card-body">
+            <h3>Subir Archivo</h3>
+            <form id="uploadForm" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="file" class="form-label">Seleccionar Archivo</label>
+                    <input type="file" id="file" name="file" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="file_type" class="form-label">Tipo de Archivo</label>
+                    <select id="file_type" name="file_type" class="form-control">
+                        <option value="product_image">Imagen de Producto</option>
+                        <option value="price_list">Lista de Precios</option>
+                        <option value="other">Otro</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn">Subir Archivo</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Lista de archivos -->
+<div class="mt-4">
+    <div class="card">
+        <div class="card-body">
+            <h3>Archivos Subidos</h3>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Nombre Original</th>
+                            <th>Tipo</th>
+                            <th>Subido por</th>
+                            <th>Fecha</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for file in files %}
+                            <tr>
+                                <td>{{ file.original_filename }}</td>
+                                <td>{{ file.file_type }}</td>
+                                <td>{{ file.uploader.username }}</td>
+                                <td>{{ file.uploaded_at.strftime('%d/%m/%Y %H:%M') }}</td>
+                                <td>
+                                    <a href="{{ url_for('static', filename='uploads/' + file.file_type + '/' + file.filename) }}" class="btn btn-secondary" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">Descargar</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="text-center mt-4">
+    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">Volver al Panel</a>
+</div>
+
+<script>
+document.getElementById('uploadForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData();
+    const fileInput = document.getElementById('file');
+    const fileType = document.getElementById('file_type').value;
+    
+    if (fileInput.files.length > 0) {
+        formData.append('file', fileInput.files[0]);
+        formData.append('file_type', fileType);
+        
+        fetch('/admin/files/upload', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Archivo subido exitosamente');
+                location.reload();
+            } else {
+                alert('Error al subir el archivo: ' + data.error);
+            }
+        })
+        .catch(error => {
+            alert('Error al subir el archivo');
+        });
+    }
+});
+</script>
+{% endblock %}

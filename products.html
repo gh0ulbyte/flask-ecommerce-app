@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Productos - Tienda Online{% endblock %}
+
+{% block content %}
+<div class="text-center mt-4">
+    <h1>{% if search_query %}Resultados para "{{ search_query }}"{% else %}Nuestros Productos{% endif %}</h1>
+    <p class="mt-2">{% if search_query %}Se encontraron {{ products.total }} productos{% else %}Explora nuestra amplia gama de productos{% endif %}</p>
+</div>
+
+<!-- Filtros -->
+<div class="card mt-4">
+    <div class="card-body">
+        <div class="d-flex gap-2 align-items-center">
+            <label for="category" class="form-label">Categoría:</label>
+            <select id="category" class="form-control" style="max-width: 200px;">
+                <option value="">Todas las categorías</option>
+                {% for category in categories %}
+                    <option value="{{ category[0] }}">{{ category[0] }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+</div>
+
+<!-- Grid de productos -->
+{% if products.items %}
+    <div class="products-grid mt-4">
+        {% for product in products.items %}
+            <div class="card">
+                {% if product.image %}
+                    <img src="{{ url_for('static', filename='uploads/' + product.image) }}" alt="{{ product.name }}" class="card-img">
+                {% else %}
+                    <img src="{{ url_for('static', filename='uploads/products/default.jpg') }}" alt="{{ product.name }}" class="card-img">
+                {% endif %}
+                <div class="card-body">
+                    <h3 class="card-title">{{ product.name }}</h3>
+                    <p class="card-text">{{ product.description[:100] }}{% if product.description|length > 100 %}...{% endif %}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="price">${{ "%.2f"|format(product.price) }}</span>
+                        <a href="{{ url_for('product_detail', product_id=product.id) }}" class="btn">Ver Detalles</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Paginación -->
+    {% if products.pages > 1 %}
+        <div class="text-center mt-4">
+            {% if products.has_prev %}
+                <a href="{{ url_for('products', page=products.prev_num) }}" class="btn btn-secondary">Anterior</a>
+            {% endif %}
+            
+            <span class="mx-3">Página {{ products.page }} de {{ products.pages }}</span>
+            
+            {% if products.has_next %}
+                <a href="{{ url_for('products', page=products.next_num) }}" class="btn btn-secondary">Siguiente</a>
+            {% endif %}
+        </div>
+    {% endif %}
+{% else %}
+    <div class="text-center mt-4">
+        <p>No se encontraron productos.</p>
+    </div>
+{% endif %}
+{% endblock %}

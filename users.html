@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Gestionar Usuarios - Administración{% endblock %}
+
+{% block content %}
+<div class="text-center mt-4">
+    <h1>Gestionar Usuarios</h1>
+    <p class="mt-2">Administra los usuarios y permisos de administrador</p>
+</div>
+
+<div class="mt-4">
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Usuario</th>
+                            <th>Email</th>
+                            <th>Tipo</th>
+                            <th>Fecha Registro</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                            <tr>
+                                <td>{{ user.id }}</td>
+                                <td>{{ user.username }}</td>
+                                <td>{{ user.email }}</td>
+                                <td>
+                                    {% if user.is_admin %}
+                                        <span class="badge badge-success">Administrador</span>
+                                    {% else %}
+                                        <span class="badge badge-secondary">Usuario</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ user.created_at.strftime('%d/%m/%Y') }}</td>
+                                <td>
+                                    {% if user.id != current_user.id %}
+                                        <a href="{{ url_for('admin_toggle_admin', user_id=user.id) }}" 
+                                           class="btn btn-{{ 'secondary' if user.is_admin else 'success' }}" 
+                                           style="padding: 0.25rem 0.5rem; font-size: 0.8rem;"
+                                           onclick="return confirm('¿Estás seguro de cambiar los permisos de {{ user.username }}?')">
+                                            {{ 'Quitar Admin' if user.is_admin else 'Hacer Admin' }}
+                                        </a>
+                                    {% else %}
+                                        <span class="text-muted">Tu cuenta</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-4">
+    <div class="card">
+        <div class="card-body">
+            <h3>Información Importante</h3>
+            <ul>
+                <li><strong>Administradores:</strong> Pueden acceder al panel de administración y gestionar la tienda</li>
+                <li><strong>Usuarios:</strong> Solo pueden comprar productos y ver sus pedidos</li>
+                <li><strong>Seguridad:</strong> No puedes cambiar tus propios permisos de administrador</li>
+                <li><strong>Recomendación:</strong> Mantén el número de administradores al mínimo necesario</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="text-center mt-4">
+    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">Volver al Panel</a>
+</div>
+{% endblock %}
